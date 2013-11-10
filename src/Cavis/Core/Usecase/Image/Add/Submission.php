@@ -126,7 +126,7 @@ class Submission extends Data\Image
     {
         $this->thumbnail = new Data\File;
         $this->photoshopper->setup($this->file->tmp_name, $this->file->tmp_name.'.thumb.png');
-        $this->photoshopper->resize_to_width(280);
+        $this->photoshopper->resize_to_width(400);
         $this->thumbnail->full_path = $this->file->tmp_name.'.thumb.png';
     }
 
@@ -140,6 +140,11 @@ class Submission extends Data\Image
 
         return $this->repository->save_image(
             $this->name,
+            $this->author,
+            $this->website,
+            $this->email,
+            $this->summary,
+            $this->description,
             $this->repository->save_file($this->thumbnail),
             $this->repository->save_file($this->file),
             $supplementary_file_paths,

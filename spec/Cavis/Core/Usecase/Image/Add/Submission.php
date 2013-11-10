@@ -156,7 +156,7 @@ class Submission extends ObjectBehavior
     function it_generates_a_thumbnail($photoshopper)
     {
         $photoshopper->setup('file_tmp_name', 'file_tmp_name.thumb.png')->shouldBeCalled();
-        $photoshopper->resize_to_width(280)->shouldBeCalled();
+        $photoshopper->resize_to_width(400)->shouldBeCalled();
         $this->thumbnail->shouldBe(NULL);
         $this->generate_thumbnail();
         $this->thumbnail->full_path->shouldBe('file_tmp_name.thumb.png');
@@ -169,6 +169,11 @@ class Submission extends ObjectBehavior
         $repository->save_file($this->file)->shouldBeCalled()->willReturn('file_path');
         $repository->save_image(
             'name',
+            'author',
+            'website',
+            'email',
+            'summary',
+            'description',
             'thumbnail_path',
             'file_path',
             array('file_path', 'file_path'),
