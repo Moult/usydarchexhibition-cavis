@@ -59,7 +59,7 @@ class Submission extends Data\Image
         $this->validator->rule('file', 'upload_valid');
         $this->validator->rule('file', 'upload_type', array('jpg', 'png', 'jpeg'));
         $this->validator->rule('file', 'upload_size', '3M');
-        $this->validator->callback('file', array($this, 'is_wider_than_px'), array('file', 'layout_width'));
+        $this->validator->callback('file', array($this, 'is_wider_than_px'), array('layout_width'));
         $this->validator->callback('category_id', array($this, 'is_an_existing_category_id'), array('category_id'));
         if ( ! $this->validator->check())
             throw new Exception\Validation($this->validator->errors());
@@ -76,13 +76,13 @@ class Submission extends Data\Image
                     'type' => $file->mimetype,
                     'size' => $file->filesize_in_bytes,
                     'error' => $file->error_code,
-                    'content_width' => 600
-                )
+                ),
+                'content_width' => 600
             ));
             $this->validator->rule('supplementary_file', 'upload_valid');
             $this->validator->rule('supplementary_file', 'upload_type', array('jpg', 'png', 'jpeg'));
             $this->validator->rule('supplementary_file', 'upload_size', '3M');
-            $this->validator->callback('supplementary_file', array($this, 'is_wider_than_px'), array('supplementary_file', 'content_width'));
+            $this->validator->callback('supplementary_file', array($this, 'is_wider_than_px'), array('content_width'));
             if ( ! $this->validator->check())
                 throw new Exception\Validation($this->validator->errors());
         }

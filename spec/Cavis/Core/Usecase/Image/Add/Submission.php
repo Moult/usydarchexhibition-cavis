@@ -77,7 +77,7 @@ class Submission extends ObjectBehavior
         $validator->rule('file', 'upload_valid')->shouldBeCalled();
         $validator->rule('file', 'upload_type', array('jpg', 'png', 'jpeg'))->shouldBeCalled();
         $validator->rule('file', 'upload_size', '3M')->shouldBeCalled();
-        $validator->callback('file', array($this, 'is_wider_than_px'), array('file', 'layout_width'))->shouldBeCalled();
+        $validator->callback('file', array($this, 'is_wider_than_px'), array('layout_width'))->shouldBeCalled();
         $validator->callback('category_id', array($this, 'is_an_existing_category_id'), array('category_id'))->shouldBeCalled();
         $validator->check()->shouldBeCalled()->willReturn(TRUE);
         $this->validate();
@@ -99,14 +99,14 @@ class Submission extends ObjectBehavior
                 'tmp_name' => 'file_tmp_name',
                 'type' => 'image/png',
                 'size' => 42,
-                'error' => 0,
-                'content_width' => 600
-            )
+                'error' => 0
+            ),
+            'content_width' => 600
         ))->shouldBeCalled();
         $validator->rule('supplementary_file', 'upload_valid')->shouldBeCalled();
         $validator->rule('supplementary_file', 'upload_type', array('jpg', 'png', 'jpeg'))->shouldBeCalled();
         $validator->rule('supplementary_file', 'upload_size', '3M')->shouldBeCalled();
-        $validator->callback('supplementary_file', array($this, 'is_wider_than_px'), array('supplementary_file', 'content_width'))->shouldBeCalled();
+        $validator->callback('supplementary_file', array($this, 'is_wider_than_px'), array('content_width'))->shouldBeCalled();
         $validator->check()->shouldBeCalled()->willReturn(TRUE);
         $this->validate_supplementary_files();
     }
