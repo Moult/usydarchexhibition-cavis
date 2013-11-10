@@ -62,7 +62,8 @@ class Submission extends ObjectBehavior
                 'size' => 42,
                 'error' => 0
             ),
-            'category_id' => 'category_id'
+            'category_id' => 'category_id',
+            'layout_width' => 1200
         ))->shouldBeCalled();
         $validator->rule('name', 'not_empty')->shouldBeCalled();
         $validator->rule('name', 'max_length', 60)->shouldBeCalled();
@@ -76,9 +77,18 @@ class Submission extends ObjectBehavior
         $validator->rule('file', 'upload_valid')->shouldBeCalled();
         $validator->rule('file', 'upload_type', array('jpg', 'png', 'jpeg'))->shouldBeCalled();
         $validator->rule('file', 'upload_size', '3M')->shouldBeCalled();
+        $validator->callback('file', array($this, 'is_wider_than_px'), array('file', 'layout_width'))->shouldBeCalled();
         $validator->callback('category_id', array($this, 'is_an_existing_category_id'), array('category_id'))->shouldBeCalled();
         $validator->check()->shouldBeCalled()->willReturn(TRUE);
         $this->validate();
+    }
+
+    function it_validates_files_which_are_wider_than_px($file, $photoshopper)
+    {
+        $file->tmp_name = 'file_path';
+        $photoshopper->setup('file_path')->shouldBeCalled();
+        $photoshopper->get_width()->shouldBeCalled()->willReturn(1200);
+        $this->is_wider_than_px($file, 1200)->shouldReturn(TRUE);
     }
 
     function it_validates_the_supplementary_files_in_turn($validator)
@@ -89,12 +99,14 @@ class Submission extends ObjectBehavior
                 'tmp_name' => 'file_tmp_name',
                 'type' => 'image/png',
                 'size' => 42,
-                'error' => 0
+                'error' => 0,
+                'content_width' => 600
             )
         ))->shouldBeCalled();
         $validator->rule('supplementary_file', 'upload_valid')->shouldBeCalled();
         $validator->rule('supplementary_file', 'upload_type', array('jpg', 'png', 'jpeg'))->shouldBeCalled();
         $validator->rule('supplementary_file', 'upload_size', '3M')->shouldBeCalled();
+        $validator->callback('supplementary_file', array($this, 'is_wider_than_px'), array('supplementary_file', 'content_width'))->shouldBeCalled();
         $validator->check()->shouldBeCalled()->willReturn(TRUE);
         $this->validate_supplementary_files();
     }
@@ -116,7 +128,7 @@ class Submission extends ObjectBehavior
     function it_checks_whether_or_not_the_image_is_wider_than_the_layout($photoshopper)
     {
         $photoshopper->setup('file_tmp_name')->shouldBeCalled();
-        $photoshopper->get_width()->shouldBeCalled()->willReturn(1200);
+        $photoshopper->get_width()->shouldBeCalled()->willReturn(1199);
         $this->is_wider_than_layout()->shouldReturn(FALSE);
     }
 

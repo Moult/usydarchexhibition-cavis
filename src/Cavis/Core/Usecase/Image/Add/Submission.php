@@ -43,7 +43,8 @@ class Submission extends Data\Image
                 'size' => $this->file->filesize_in_bytes,
                 'error' => $this->file->error_code
             ),
-            'category_id' => $this->category->id
+            'category_id' => $this->category->id,
+            'layout_width' => 1200
         ));
 
         $this->validator->rule('name', 'not_empty');
@@ -58,6 +59,7 @@ class Submission extends Data\Image
         $this->validator->rule('file', 'upload_valid');
         $this->validator->rule('file', 'upload_type', array('jpg', 'png', 'jpeg'));
         $this->validator->rule('file', 'upload_size', '3M');
+        $this->validator->callback('file', array($this, 'is_wider_than_px'), array('file', 'layout_width'));
         $this->validator->callback('category_id', array($this, 'is_an_existing_category_id'), array('category_id'));
         if ( ! $this->validator->check())
             throw new Exception\Validation($this->validator->errors());
@@ -73,15 +75,23 @@ class Submission extends Data\Image
                     'tmp_name' => $file->tmp_name,
                     'type' => $file->mimetype,
                     'size' => $file->filesize_in_bytes,
-                    'error' => $file->error_code
+                    'error' => $file->error_code,
+                    'content_width' => 600
                 )
             ));
             $this->validator->rule('supplementary_file', 'upload_valid');
             $this->validator->rule('supplementary_file', 'upload_type', array('jpg', 'png', 'jpeg'));
             $this->validator->rule('supplementary_file', 'upload_size', '3M');
+            $this->validator->callback('supplementary_file', array($this, 'is_wider_than_px'), array('supplementary_file', 'content_width'));
             if ( ! $this->validator->check())
                 throw new Exception\Validation($this->validator->errors());
         }
+    }
+
+    public function is_wider_than_px(Data\File $file, $px)
+    {
+        $this->photoshopper->setup($file->tmp_name);
+        return ($this->photoshopper->get_width() >= $px);
     }
 
     public function is_an_existing_category_id($id)
@@ -91,8 +101,7 @@ class Submission extends Data\Image
 
     public function is_wider_than_layout()
     {
-        $this->photoshopper->setup($this->file->tmp_name);
-        return ($this->photoshopper->get_width() > 1200);
+        return $this->is_wider_than_px($this->file, 1200);
     }
 
     public function resize_to_layout()
