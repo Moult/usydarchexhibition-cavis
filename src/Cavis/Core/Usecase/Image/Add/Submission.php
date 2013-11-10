@@ -126,7 +126,7 @@ class Submission extends Data\Image
     {
         $this->thumbnail = new Data\File;
         $this->photoshopper->setup($this->file->tmp_name, $this->file->tmp_name.'.thumb.png');
-        $this->photoshopper->resize_to_width(222);
+        $this->photoshopper->resize_to_width(280);
         $this->thumbnail->full_path = $this->file->tmp_name.'.thumb.png';
     }
 
