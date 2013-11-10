@@ -88,9 +88,9 @@ class Submission extends Data\Image
         }
     }
 
-    public function is_wider_than_px(Data\File $file, $px)
+    public function is_wider_than_px($file, $px)
     {
-        $this->photoshopper->setup($file->tmp_name);
+        $this->photoshopper->setup($file['tmp_name']);
         return ($this->photoshopper->get_width() >= $px);
     }
 
@@ -101,7 +101,7 @@ class Submission extends Data\Image
 
     public function is_wider_than_layout()
     {
-        return $this->is_wider_than_px($this->file, 1200);
+        return $this->is_wider_than_px(array('tmp_name' => $this->file->tmp_name), 1200);
     }
 
     public function resize_to_layout()

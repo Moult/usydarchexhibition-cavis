@@ -83,9 +83,9 @@ class Submission extends ObjectBehavior
         $this->validate();
     }
 
-    function it_validates_files_which_are_wider_than_px($file, $photoshopper)
+    function it_validates_files_which_are_wider_than_px($photoshopper)
     {
-        $file->tmp_name = 'file_path';
+        $file = array('tmp_name' => 'file_path');
         $photoshopper->setup('file_path')->shouldBeCalled();
         $photoshopper->get_width()->shouldBeCalled()->willReturn(1200);
         $this->is_wider_than_px($file, 1200)->shouldReturn(TRUE);
